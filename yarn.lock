@@ -171,7 +171,7 @@
   dependencies:
     "@vscode/debugprotocol" "1.61.0"
 
-"@vscode/debugprotocol@1.61.0", "@vscode/debugprotocol@^1.61.0":
+"@vscode/debugprotocol@^1.61.0", "@vscode/debugprotocol@1.61.0":
   version "1.61.0"
   resolved "https://registry.npmjs.org/@vscode/debugprotocol/-/debugprotocol-1.61.0.tgz"
   integrity sha512-K/kF27jIStVFqlmUaGc2u+Dj8IR7YdEiSqShWr7MWhDudqpAW7uu7XMwoFwjpuC9LSaVwJMIX7EFC5OJ/RmnDQ==

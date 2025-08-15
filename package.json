@@ -87,6 +87,10 @@
                 "command": "emmylua.luarocks.checkInstallation",
                 "title": "Check LuaRocks Installation",
                 "category": "LuaRocks"
+            },
+            {
+                "command": "emmylua.copyLuaRelativePath",
+                "title": "%emmylua.copyLuaRelativePath.title%"
             }
         ],
         "languages": [
@@ -371,6 +375,20 @@
                     "group": "inline@1"
                 }
             ],
+            "explorer/context": [
+                {
+                    "command": "emmylua.copyLuaRelativePath",
+                    "when": "resourceExtname == .lua",
+                    "group": "6_copypath@2"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "emmylua.copyLuaRelativePath",
+                    "when": "resourceExtname == .lua",
+                    "group": "1_copy@2"
+                }
+            ],
             "commandPalette": [
                 {
                     "command": "emmylua.luarocks.installPackage",
@@ -382,6 +400,10 @@
                 },
                 {
                     "command": "emmylua.luarocks.checkInstallation",
+                    "when": "resourceExtname == .lua"
+                },
+                {
+                    "command": "emmylua.copyLuaRelativePath",
                     "when": "resourceExtname == .lua"
                 }
             ]

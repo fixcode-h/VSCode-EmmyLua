@@ -52,5 +52,6 @@
     "debug.launch.name": "Attach by launch program",
     "debug.launch.newWindow": "create new windows",
     "debug.launch.program": "Launch program and debug executable file",
-    "debug.launch.workingDir": "working directory"
+    "debug.launch.workingDir": "working directory",
+    "emmylua.copyLuaRelativePath.title": "Copy Lua Relative Path"
 }

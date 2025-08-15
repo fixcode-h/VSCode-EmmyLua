@@ -52,5 +52,6 @@
     "debug.launch.name": "启动并附加程序",
     "debug.launch.newWindow": "emmylua会创建一个新窗口展示这个进程",
     "debug.launch.program": "启动并附加的可执行文件",
-    "debug.launch.workingDir": "设置工作区"
+    "debug.launch.workingDir": "设置工作区",
+    "emmylua.copyLuaRelativePath.title": "复制Lua相对路径"
 }

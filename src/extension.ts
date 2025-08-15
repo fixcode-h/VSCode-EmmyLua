@@ -58,6 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('emmylua.luarocks.showPackages', showPackagesView),
         vscode.commands.registerCommand('emmylua.luarocks.clearSearch', clearSearch),
         vscode.commands.registerCommand('emmylua.luarocks.checkInstallation', checkLuaRocksInstallation),
+        vscode.commands.registerCommand('emmylua.copyLuaRelativePath', copyLuaRelativePath),
     ];
 
     // Register event listeners
@@ -567,5 +568,47 @@ async function checkLuaRocksInstallation(): Promise<void> {
         if (action === 'Install Guide') {
             vscode.env.openExternal(vscode.Uri.parse('https://luarocks.org/#quick-start'));
         }
+    }
+}
+
+async function copyLuaRelativePath(uri?: vscode.Uri): Promise<void> {
+    try {
+        // 如果没有传入uri，尝试从当前活动编辑器获取
+        if (!uri) {
+            const activeEditor = vscode.window.activeTextEditor;
+            if (!activeEditor) {
+                vscode.window.showWarningMessage('No Lua file selected');
+                return;
+            }
+            uri = activeEditor.document.uri;
+        }
+
+        // 检查是否为Lua文件
+        if (!uri.fsPath.endsWith('.lua')) {
+            vscode.window.showWarningMessage('Selected file is not a Lua file');
+            return;
+        }
+
+        // 获取工作区根目录
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        if (!workspaceFolder) {
+            vscode.window.showWarningMessage('File is not in a workspace');
+            return;
+        }
+
+        // 计算相对路径
+        const relativePath = path.relative(workspaceFolder.uri.fsPath, uri.fsPath);
+        
+        // 将路径分隔符替换为点号，并去掉.lua扩展名
+        let luaPath = relativePath.replace(/[\\/]/g, '.');
+        if (luaPath.endsWith('.lua')) {
+            luaPath = luaPath.slice(0, -4); // 去掉末尾的.lua
+        }
+
+        // 复制到剪贴板
+        await vscode.env.clipboard.writeText(luaPath);
+        vscode.window.showInformationMessage(`Copied Lua path: ${luaPath}`);
+    } catch (error) {
+        vscode.window.showErrorMessage(`Failed to copy Lua relative path: ${error}`);
     }
 }
