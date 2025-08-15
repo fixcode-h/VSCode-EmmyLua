@@ -1027,8 +1027,53 @@
                 }
             },
             {
-                "title": "Language Server",
+                "title": "Debug",
                 "order": 13,
+                "properties": {
+                    "emmylua.debug.filterUEProcesses": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "%config.emmylua.debug.filterUEProcesses.description%"
+                    },
+                    "emmylua.debug.threadFilterBlacklist": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [
+                            "CrashReportClientEditor",
+                            "CrashReportClient",
+                            "UnrealCEFSubProcess",
+                            "UE4Editor-Cmd",
+                            "UnrealBuildTool",
+                            "ShaderCompileWorker",
+                            "UnrealHeaderTool",
+                            "DotNetHost"
+                        ],
+                        "markdownDescription": "%config.emmylua.debug.threadFilterBlacklist.description%"
+                    },
+                    "emmylua.debug.ueProcessNames": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [
+                            "UE4Editor",
+                            "UE5Editor",
+                            "UnrealEditor"
+                        ],
+                        "markdownDescription": "%config.emmylua.debug.ueProcessNames.description%"
+                    },
+                    "emmylua.debug.autoAttachSingleProcess": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "%config.emmylua.debug.autoAttachSingleProcess.description%"
+                    }
+                }
+            },
+            {
+                "title": "Language Server",
+                "order": 14,
                 "properties": {
                     "emmylua.ls.startParameters": {
                         "type": "array",

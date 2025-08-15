@@ -40,20 +40,46 @@ export class EmmyAttachDebuggerProvider extends DebuggerProvider {
                 const arr = str.split('\r\n');
                 const size = Math.floor(arr.length / 4);
                 const items: ProcessInfoItem[] = [];
+                
+                // 获取调试配置
+                const config = vscode.workspace.getConfiguration('emmylua');
+                const filterUEProcesses = config.get<boolean>('debug.filterUEProcesses', false);
+                const autoAttachSingleProcess = config.get<boolean>('debug.autoAttachSingleProcess', true);
+                
+                // 从配置中获取线程过滤黑名单
+                const threadFilterBlacklist = config.get<string[]>('debug.threadFilterBlacklist', []);
+                
                 for (let i = 0; i < size; i++) {
                     const pid = parseInt(arr[i * 4]);
                     const title = arr[i * 4 + 1];
                     const path = arr[i * 4 + 2];
                     const name = basename(path);
+                    
+                    // 检查是否为UE进程
+                    const isUEProcess = this.isUnrealEngineProcess(name, path, title);
+                    
                     const item: ProcessInfoItem = {
                         pid: pid,
                         label: `${pid} : ${name}`,
                         description: title,
                         detail: path
                     };
-                    if (processName.length === 0
+                    
+                    // 应用过滤逻辑
+                    const matchesProcessName = processName.length === 0
                         || title.indexOf(processName) !== -1
-                        || name.indexOf(processName) !== -1) {
+                        || name.indexOf(processName) !== -1;
+                    
+                    // 检查是否在黑名单中
+                    const isBlacklisted = threadFilterBlacklist.some(blacklistItem => 
+                        name.includes(blacklistItem) || 
+                        title.includes(blacklistItem) || 
+                        path.includes(blacklistItem)
+                    );
+                    
+                    const shouldInclude = matchesProcessName && (!filterUEProcesses || isUEProcess) && !isBlacklisted;
+                    
+                    if (shouldInclude) {
                         items.push(item);
                     }
                 }
@@ -70,7 +96,21 @@ export class EmmyAttachDebuggerProvider extends DebuggerProvider {
                         }
                     });
                 } else if (items.length == 1) {
-                    resolve(items[0].pid);
+                    if (autoAttachSingleProcess) {
+                        resolve(items[0].pid);
+                    } else {
+                        vscode.window.showQuickPick(items, {
+                            matchOnDescription: true,
+                            matchOnDetail: true,
+                            placeHolder: "Select the process to attach"
+                        }).then((item: ProcessInfoItem | undefined) => {
+                            if (item) {
+                                resolve(item.pid);
+                            } else {
+                                reject();
+                            }
+                        });
+                    }
                 } else {
                     vscode.window.showErrorMessage("No process for attach")
                     reject();
@@ -78,5 +118,26 @@ export class EmmyAttachDebuggerProvider extends DebuggerProvider {
 
             }).on("error", error => reject);
         });
+    }
+
+    /**
+     * 判断是否为虚幻引擎进程
+     * @param name 进程名称
+     * @param path 进程路径
+     * @param title 进程标题
+     * @returns 是否为UE进程
+     */
+    private isUnrealEngineProcess(name: string, path: string, title: string): boolean {
+        // 从配置中获取UE进程名称模式
+        const config = vscode.workspace.getConfiguration('emmylua');
+        const ueProcessNames = config.get<string[]>('debug.ueProcessNames', []);
+
+        // 检查进程名称
+        const lowerName = name.toLowerCase();
+        if (ueProcessNames.some(ueName => lowerName.includes(ueName.toLowerCase()))) {
+            return true;
+        }
+
+        return false;
     }
 }
